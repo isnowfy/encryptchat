@@ -3,7 +3,7 @@
 require_once "dbcon.php";
 $msg = isset($_POST['msg']) ? $_POST['msg'] : '';
 $room = isset($_POST['room']) ? $_POST['room'] : '';
-$time = date("Y-m-d H:i:s", time() + 0 * 3600);
+$time = date("H:i:s", time() + 0 * 3600);
 $id = isset($_POST['id']) ? $_POST['id'] : '';
 $stamp=microtime(TRUE);
 require_once "getsafe.php";

@@ -20,11 +20,14 @@ password=""
 function encrypt(myuser,mykey){
 	user=myuser;
 	password=Crypto.MD5(mykey+"password");
-	$('#pass').toggle();
+	$('#origin').toggle();
 	$('#ss').toggle();
         $('#content').toggle();
-	room=Crypto.MD5(mykey);
-	chat('<?php echo date("Y-m-d H:i:s", time() + 0 * 3600);?>','<?php echo microtime(TRUE);?>');
+	room=Crypto.MD5(mykey+"roomtoken");
+	chat('<?php echo date("H:i:s", time() + 0 * 3600);?>','<?php echo microtime(TRUE);?>');
+}
+function htmlEncode(value){
+	return $('<div/>').text(value).html();
 }
 function doRequest(msg) {
     $.ajax({
@@ -47,8 +50,8 @@ function chat(timestamp,stamp) {
 		 var timestamp=msg.timestamp;
 		 var stamp=msg.stamp;
 		 div=document.getElementById('content');
-		 div.innerHTML=div.innerHTML+'<div><em>'+timestamp+' <font color="#FF0000">'+msg.user+':</font></em>' + 
-		 Aes.Ctr.decrypt(msg.msg,password,256) + '</div>';
+		 div.innerHTML=div.innerHTML+'<div>['+timestamp+'] &lt;@<font color="#FF0000">'+msg.user+'</font>&gt; ' + 
+		 htmlEncode(Aes.Ctr.decrypt(msg.msg,password,256)) + '</div>';
 		 div.scrollTop=div.scrollHeight;
 	   },
 	   error: function(msg){
@@ -59,12 +62,18 @@ function chat(timestamp,stamp) {
 </script> 
 </head> 
 <body> 
-<div>
+<div id="origin">
     <form id="pass" action="" method="get" onsubmit="encrypt($('#user').val(),$('#pass0').val());return false;"> 
       pass:<input type="text" name="pass" id="pass0" value="" /><br /> 
       user:<input type="text" name="user" id="user" value="" /><br />
       <input type="submit" name="submit" value="save" /> 
     </form> 
+<p>这是一个用于加密群聊的web程序，支持手机浏览器</p>
+<p>在pass中输入你们的密码，user输入昵称用于辨认</p>
+<p>这样输入相同密码的人可以方便的在同一房间聊天</p>
+<p>传输的是经过256位AES加密后的数据</p>
+<p>所以即便是我也无法获得明文聊天数据</p>
+<p><a href="https://github.com/isnowfy/encryptchat">这里</a>有项目的源代码</p>
 </div>
 <div id="content" style="display:none;width:100%;overflow:auto;position:absolute;bottom:25px;top:0;"></div> 
 <div id="ss" style="width:100%;display:none;position:absolute;bottom:0;border-up:1px solid #D9D9D9;">
